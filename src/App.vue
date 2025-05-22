@@ -1,26 +1,26 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
-</template>
+      <v-app>
+        <TopNav />
+        <v-row no-gutters>
+          <v-col cols="2">
+            <SideNav />
+          </v-col>
+          <v-col cols="10">
+            <router-view />
+          </v-col>
+        </v-row>
+      </v-app>
+    </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+    <script>
+    import TopNav from '@/components/TopNav.vue';
+    import SideNav from '@/components/SideNav.vue';
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+    export default {
+      name: 'App',
+      components: {
+        TopNav,
+        SideNav
+      }
+    };
+    </script>
