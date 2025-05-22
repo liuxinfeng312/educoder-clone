@@ -20,7 +20,12 @@ const routes = [
   {
     path: '/discussion-forum',
     name: 'DiscussionForum',
-    component: () => import('../views/DiscussionForum.vue')
+    component: () => import('../views/ThreadForum.vue')
+  },
+   {
+    path: '/thread/:id',
+    name: 'thread',
+    component: () => import('../views/ThreadDetail.vue')
   },
   {
     path: '/user-profile',

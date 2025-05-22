@@ -6,7 +6,6 @@
         <v-col cols="12" md="8">
           <!-- 发帖 -->
           <v-card class="mb-4" elevation="2">
-            <v-card-title class="headline">------</v-card-title>
             <v-card-title class="headline">发表新帖子</v-card-title>
             <v-card-text>
               <v-form ref="postForm" v-model="valid" lazy-validation>
@@ -38,27 +37,27 @@
           <v-card class="mb-4" elevation="2">
             <v-card-title class="headline">论坛交流</v-card-title>
             <v-card-text>
-              <v-list>
+              <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+              <v-list v-if="posts.length > 0">
                 <v-list-item v-for="post in posts" :key="post.id" @click="goToPostDetail(post.id)">
-                  <v-list-item-content>
-                    <v-list-item-title class="post-title">
-                      <v-chip small class="mr-2" color="blue" text-color="white">{{ post.category }}</v-chip>
-                      {{ post.title }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle class="post-meta">
-                      <span class="mr-4">{{ post.views }} 浏览</span>
-                      <span class="mr-4">{{ post.likes }} 赞</span>
-                      <span>{{ post.repliesCount || 0 }} 回复</span>
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle class="post-author">
-                      <v-avatar size="24" class="mr-2">
-                        <img :src="post.author?.avatarUrl || 'https://via.placeholder.com/24'" alt="avatar">
-                      </v-avatar>
-                      {{ post.author?.username }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
+                  <v-list-item-title class="post-title">
+                    <v-chip small class="mr-2" color="blue" text-color="white">{{ post.category }}</v-chip>
+                    {{ post.title }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="post-meta">
+                    <span class="mr-4">{{ post.views }} 浏览</span>
+                    <span class="mr-4">{{ post.likes }} 赞</span>
+                    <span>{{ post.replies ? post.replies.length : 0 }} 回复</span>
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle class="post-author">
+                    <v-avatar size="24" class="mr-2">
+                      <img :src="post.author?.avatarUrl || 'https://via.placeholder.com/24'" alt="avatar">
+                    </v-avatar>
+                    {{ post.author?.username }}
+                  </v-list-item-subtitle>
                 </v-list-item>
               </v-list>
+              <p v-else>暂无帖子</p>
             </v-card-text>
           </v-card>
         </v-col>
@@ -115,7 +114,8 @@ export default {
         content: '',
         category: '',
         authorId: null
-      }
+      },
+      errorMessage: ''
     };
   },
   methods: {
@@ -124,13 +124,13 @@ export default {
         const response = await axios.get('http://localhost:8080/api/forum/posts');
         this.posts = response.data;
         console.log('获取帖子列表成功:', this.posts);
-        // 模拟 repliesCount（实际应从后端获取）
-        this.posts.forEach(post => {
-          post.repliesCount = 0; // 假设初始为 0
-        });
       } catch (error) {
         console.error('获取帖子列表失败:', error);
-        alert('无法加载帖子列表，请稍后重试');
+        if (error.response) {
+          this.errorMessage = '无法加载帖子列表：' + (error.response.data || '服务器错误，请检查后端服务');
+        } else {
+          this.errorMessage = '无法加载帖子列表：网络错误，请检查网络连接';
+        }
       }
     },
     async submitPost() {
@@ -214,5 +214,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.error {
+  color: red;
 }
 </style>
